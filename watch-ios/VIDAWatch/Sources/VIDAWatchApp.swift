@@ -26,6 +26,12 @@ struct VIDAWatchApp: App {
                 .environment(streakStore)
                 .environment(intentionStore)
                 .task {
+                    // F5 : active WatchConnectivity, relie les stores aux
+                    // messages entrants depuis l'iPhone.
+                    WatchSessionManager.shared.activate(
+                        streakStore: streakStore,
+                        intentionStore: intentionStore
+                    )
                     await streakStore.refresh()
                     await intentionStore.refresh()
                 }
