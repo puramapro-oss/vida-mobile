@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P8-F6 : placeholder feuille emeraude VIDA, remplacee par l'icone
+     produite par Pollinations+sharp post-SASU (cf CLAUDE.md MOBILE icones). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M54,20 C35,30 25,48 30,70 C35,85 48,92 60,88 C75,82 82,65 78,48 C74,32 65,22 54,20 Z" />
+    <path
+        android:fillColor="#0A0A0F"
+        android:pathData="M54,34 C50,50 46,62 48,78 C50,70 52,62 54,54 C56,62 58,70 60,78 C62,62 58,50 54,34 Z" />
+</vector>
