@@ -1,0 +1,120 @@
+name: VIDAWatch
+options:
+  bundleIdPrefix: dev.purama.vida
+  deploymentTarget:
+    watchOS: "10.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+# Team ID is a placeholder until SASU / Apple Developer Program.
+# Swap "000000000A" for the real APPLE_TEAM_ID post-SASU, or drop
+# DEVELOPMENT_TEAM entirely for manual signing during local dev.
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: "000000000A"
+    CODE_SIGN_STYLE: Automatic
+    # Simulator builds don't require real signing. CI uses simulator.
+    CODE_SIGNING_ALLOWED_FOR_SIMULATOR: "NO"
+    # Watch apps distribute inside their companion iOS bundle; companion
+    # ID is declared via CompanionAppBundleIdentifier in Info.plist.
+
+targets:
+  VIDAWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - path: VIDAWatch/Sources
+      - path: VIDAWatch/Resources
+        buildPhase: resources
+    info:
+      path: VIDAWatch/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: VIDA
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: dev.purama.vida
+        WKWatchOnly: false
+        WKSupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSHealthShareUsageDescription: >-
+          VIDA lit tes pas, ton rythme cardiaque et ta méditation pour
+          transformer ton activité en récompenses concrètes.
+        NSHealthUpdateUsageDescription: >-
+          VIDA enregistre tes sessions de respiration guidée dans ton
+          appli Santé.
+        UIAppFonts: []
+        WKExtensionDelegateClassName: ""
+    entitlements:
+      path: VIDAWatch/Resources/VIDAWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.dev.purama.vida
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.purama.vida.watchapp
+        TARGETED_DEVICE_FAMILY: "4"
+        INFOPLIST_KEY_CFBundleDisplayName: VIDA
+        GENERATE_INFOPLIST_FILE: "NO"
+        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.0.0"
+        ENABLE_PREVIEWS: "YES"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - sdk: HealthKit.framework
+      - sdk: WatchConnectivity.framework
+
+  VIDAWatchTests:
+    type: bundle.unit-test
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - path: VIDAWatch/Tests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.purama.vida.watchapp.tests
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/VIDAWatch.app/VIDAWatch"
+    dependencies:
+      - target: VIDAWatch
+
+  VIDAWatchComplication:
+    type: app-extension
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - path: VIDAWatchComplication
+    info:
+      path: VIDAWatchComplication/Info.plist
+      properties:
+        CFBundleDisplayName: VIDA Complications
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.purama.vida.watchapp.complications
+        TARGETED_DEVICE_FAMILY: "4"
+        GENERATE_INFOPLIST_FILE: "NO"
+        SKIP_INSTALL: "YES"
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+
+schemes:
+  VIDAWatch:
+    build:
+      targets:
+        VIDAWatch: all
+        VIDAWatchComplication: all
+        VIDAWatchTests: [test]
+    test:
+      targets:
+        - VIDAWatchTests
+      gatherCoverageData: true
