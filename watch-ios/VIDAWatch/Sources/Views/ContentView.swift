@@ -28,7 +28,10 @@ struct ContentView: View {
     private func refreshHealth() async {
         do {
             _ = try await health.requestAuthorization()
-            self.healthSnapshot = try await health.currentSnapshot()
+            let snap = try await health.currentSnapshot()
+            self.healthSnapshot = snap
+            // F4 : alimente les complications (steps / mindful).
+            HealthComplicationSync.sync(from: snap)
         } catch {
             // On ignore les erreurs ici — l'UI montre .zero et le Dashboard
             // reste utilisable. Logging Sentry arrive post-SASU.

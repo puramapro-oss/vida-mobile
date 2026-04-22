@@ -91,6 +91,9 @@ targets:
     deploymentTarget: "10.0"
     sources:
       - path: VIDAWatchComplication
+      # Bridge shared with main app — compiled into both targets so the
+      # app can write and the extension can read the same ComplicationSnapshot.
+      - path: VIDAWatch/Sources/Core/ComplicationDataBridge.swift
     info:
       path: VIDAWatchComplication/Info.plist
       properties:

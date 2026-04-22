@@ -1,13 +1,15 @@
 //
 //  StreakStore.swift
-//  VIDAWatch — P8-F2
+//  VIDAWatch — P8-F2/F4
 //
-//  Observable store pour le streak + le streak gratitude. Alimente la
-//  StreakView et la complication rectangulaire (F4).
+//  Observable store pour le streak + le streak gratitude.
+//  F4 : chaque mise a jour synchronise la ComplicationSnapshot et reload
+//  les timelines via WidgetCenter.
 //
 
 import Foundation
 import Observation
+import WidgetKit
 
 @MainActor
 @Observable
@@ -33,6 +35,7 @@ public final class StreakStore {
             self.streak = profile.streak
             self.gratitudeStreak = profile.gratitudeStreak
             self.lastRefreshedAt = Date()
+            syncComplication()
         } catch {
             self.lastError = (error as? LocalizedError)?.errorDescription
                 ?? error.localizedDescription
@@ -44,5 +47,21 @@ public final class StreakStore {
         self.streak = streak
         self.gratitudeStreak = gratitudeStreak
         self.lastRefreshedAt = Date()
+        syncComplication()
+    }
+
+    /// F4 : propage la derniere valeur aux complications.
+    private func syncComplication() {
+        let previous = ComplicationDataBridge.read()
+        let next = ComplicationSnapshot(
+            streak: streak,
+            gratitudeStreak: gratitudeStreak,
+            stepsToday: previous.stepsToday,
+            stepsGoal: previous.stepsGoal,
+            mindfulMinutesToday: previous.mindfulMinutesToday,
+            updatedAt: Date()
+        )
+        ComplicationDataBridge.write(next)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
